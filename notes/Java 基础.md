@@ -216,7 +216,7 @@ System.out.println(s3 == s4);           // true
 ```java
 String s5 = "bbb";
 String s6 = "bbb";
-System.out.println(s4 == s5);  // true
+System.out.println(s5 == s6);  // true
 ```
 
 在 Java 7 之前，String Pool 被放在运行时常量池中，它属于永久代。而在 Java 7，String Pool 被移到堆中。这是因为永久代的空间有限，在大量使用字符串的场景下会导致 OutOfMemoryError 错误。
@@ -226,9 +226,9 @@ System.out.println(s4 == s5);  // true
 
 ## new String("abc")
 
-使用这种方式一共会创建两个字符串对象（前提是 String Poll 中还没有 "abc" 字符串对象）。
+使用这种方式一共会创建两个字符串对象（前提是 String Pool 中还没有 "abc" 字符串对象）。
 
-- "abc" 属于字符串字面量，因此编译时期会在 String Poll 中创建一个字符串对象，指向这个 "abc" 字符串字面量；
+- "abc" 属于字符串字面量，因此编译时期会在 String Pool 中创建一个字符串对象，指向这个 "abc" 字符串字面量；
 - 而使用 new 的方式会在堆中创建一个字符串对象。
 
 创建一个测试类，其 main 方法中使用这种方式来创建字符串对象。
@@ -267,7 +267,7 @@ Constant pool:
 // ...
 ```
 
-在 Constant Poll 中，#19 存储这字符串字面量 "abc"，#3 是 String Poll 的字符串对象，它指向 #19 这个字符串字面量。在 main 方法中，0: 行使用 new #2 在堆中创建一个字符串对象，并且使用 ldc #3 将 String Poll 中的字符串对象作为 String 构造函数的参数。
+在 Constant Pool 中，#19 存储这字符串字面量 "abc"，#3 是 String Pool 的字符串对象，它指向 #19 这个字符串字面量。在 main 方法中，0: 行使用 new #2 在堆中创建一个字符串对象，并且使用 ldc #3 将 String Pool 中的字符串对象作为 String 构造函数的参数。
 
 以下是 String 构造函数的源码，可以看到，在将一个字符串对象作为另一个字符串对象的构造函数参数时，并不会完全复制 value 数组内容，而是都会指向同一个 value 数组。
 
@@ -288,6 +288,7 @@ Java 的参数是以值传递的形式传入方法中，而不是引用传递。
 
 ```java
 public class Dog {
+
     String name;
 
     Dog(String name) {
@@ -347,7 +348,9 @@ class PassByValueExample {
 
 ## float 与 double
 
-1.1 字面量属于 double 类型，不能直接将 1.1 直接赋值给 float 变量，因为这是向下转型。Java 不能隐式执行向下转型，因为这会使得精度降低。
+Java 不能隐式执行向下转型，因为这会使得精度降低。
+
+1.1 字面量属于 double 类型，不能直接将 1.1 直接赋值给 float 变量，因为这是向下转型。
 
 ```java
 // float f = 1.1;
@@ -368,10 +371,11 @@ short s1 = 1;
 // s1 = s1 + 1;
 ```
 
-但是使用 += 运算符可以执行隐式类型转换。
+但是使用 += 或者 ++ 运算符可以执行隐式类型转换。
 
 ```java
 s1 += 1;
+// s1++;
 ```
 
 上面的语句相当于将 s1 + 1 的计算结果进行了向下转型：
@@ -587,10 +591,11 @@ System.out.println(InterfaceExample.x);
 ## super
 
 - 访问父类的构造函数：可以使用 super() 函数访问父类的构造函数，从而委托父类完成一些初始化的工作。
-- 访问父类的成员：如果子类重写了父类的中某个方法的实现，可以通过使用 super 关键字来引用父类的方法实现。
+- 访问父类的成员：如果子类重写了父类的某个方法，可以通过使用 super 关键字来引用父类的方法实现。
 
 ```java
 public class SuperExample {
+
     protected int x;
     protected int y;
 
@@ -607,6 +612,7 @@ public class SuperExample {
 
 ```java
 public class SuperExtendExample extends SuperExample {
+
     private int z;
 
     public SuperExtendExample(int x, int y, int z) {
@@ -658,7 +664,6 @@ SuperExtendExample.func()
 ## 概览
 
 ```java
-public final native Class<?> getClass()
 
 public native int hashCode()
 
@@ -667,6 +672,10 @@ public boolean equals(Object obj)
 protected native Object clone() throws CloneNotSupportedException
 
 public String toString()
+
+public final native Class<?> getClass()
+
+protected void finalize() throws Throwable {}
 
 public final native void notify()
 
@@ -677,8 +686,6 @@ public final native void wait(long timeout) throws InterruptedException
 public final void wait(long timeout, int nanos) throws InterruptedException
 
 public final void wait() throws InterruptedException
-
-protected void finalize() throws Throwable {}
 ```
 
 ## equals()
@@ -805,6 +812,7 @@ public int hashCode() {
 
 ```java
 public class ToStringExample {
+
     private int number;
 
     public ToStringExample(int number) {
@@ -848,7 +856,7 @@ public class CloneExample {
     private int b;
 
     @Override
-    protected CloneExample clone() throws CloneNotSupportedException {
+    public CloneExample clone() throws CloneNotSupportedException {
         return (CloneExample)super.clone();
     }
 }
@@ -877,7 +885,7 @@ public class CloneExample implements Cloneable {
     private int b;
 
     @Override
-    protected Object clone() throws CloneNotSupportedException {
+    public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
 }
@@ -1051,6 +1059,7 @@ private 方法隐式地被指定为 final，如果在子类中定义的方法和
 
 ```java
 public class A {
+
     private int x;         // 实例变量
     private static int y;  // 静态变量
 
@@ -1079,6 +1088,7 @@ public abstract class A {
 
 ```java
 public class A {
+
     private static int x;
     private int y;
 
@@ -1117,6 +1127,7 @@ public class A {
 
 ```java
 public class OuterClass {
+
     class InnerClass {
     }
 
