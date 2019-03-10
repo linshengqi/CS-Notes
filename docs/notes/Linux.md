@@ -534,7 +534,7 @@ cp [-adfilprsu] source destination
 -f ：如果目标文件存在时，先删除目标文件
 ```
 
-<div align="center"> <img src="pics/b8081c84-62c4-4019-b3ee-4bd0e443d647.jpg"/> </div><br>
+<div align="center"> <img src="pics/b8081c84-62c4-4019-b3ee-4bd0e443d647.jpg" width="400px"> </div><br>
 
 ### 1. 实体链接
 
@@ -1245,3 +1245,5 @@ options 参数主要有 WNOHANG 和 WUNTRACED 两个选项，WNOHANG 可以使 w
 - [File system design case studies](https://www.cs.rutgers.edu/\~pxk/416/notes/13-fs-studies.html)
 - [Programming Project #4](https://classes.soe.ucsc.edu/cmps111/Fall08/proj4.shtml)
 - [FILE SYSTEM DESIGN](http://web.cs.ucla.edu/classes/fall14/cs111/scribe/11a/index.html)
+</br></br><div align="center">欢迎关注公众号，获取最新文章！</div></br>
+<div align="center"><img width="150px" src="https://github.com/CyC2018/CS-Notes/raw/master/docs/_media/%E5%85%AC%E4%BC%97%E5%8F%B7.jpg"></img></div>
